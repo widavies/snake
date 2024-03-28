@@ -36,6 +36,8 @@ public class Renderer extends View implements Runnable {
 
     }
 
+    public float downX, downY;
+    public float upX, upY;
     // Get x and y and follow user motion events
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -43,11 +45,19 @@ public class Renderer extends View implements Runnable {
         float pointY = event.getY();
         // Checks for the event that occurs
         switch (event.getAction()) {
+                    // track when finger goes down (1 point to another, measure x and y delta
             case MotionEvent.ACTION_DOWN:
                 // Starts a new line in the path
+                downX = pointX;
+                downY = pointY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 // Draws line between last point and this point
+                break;
+            case MotionEvent.ACTION_UP:
+                upX = pointX;
+                upY = pointY;
+                detectSwipe();
                 break;
             default:
                 return false;
@@ -55,6 +65,26 @@ public class Renderer extends View implements Runnable {
 
         invalidate();
         return true;
+    }
+    public void detectSwipe(){
+        float dx = upX - downX;
+        float dy = upY - downY;
+        if(Math.abs(dx) > 100 && Math.abs(dy) < 100){
+            if(dx > 0){
+                System.out.println("Right swipe");
+            }
+            else{
+                System.out.println("Left swipe");
+            }
+        }
+        else if(Math.abs(dy) > 100 && Math.abs(dx) < 100){
+            if(dy > 0){
+                System.out.println("Down swipe");
+            }
+            else{
+                System.out.println("Up swipe");
+            }
+        }
     }
 
     /*
